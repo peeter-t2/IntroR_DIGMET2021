@@ -9,7 +9,9 @@
 
 
 
-# Mutate takes us to some simple computing functions.
+#If we happen to restart R, then we need to activate the library agian, and read the data into it again.
+library(tidyverse)
+gapminder <- read_csv("data/gapminder.csv")
 
 
 
@@ -130,7 +132,11 @@ see <-gapminder %>%
   filter(lifeExp==maxlife) %>% 
   filter(year<2007)
 # In fact it seems there are a number of countries, mostly in Africa, where the life expectancy has not been increasing in the 2000s
+# We can also have a look graphically.
 
+see %>% 
+  ggplot(aes(x=year,y=lifeExp,color=continent))+
+  geom_point()
 
 
 # Ok, we have seen mutate() and we have seen group_by(). A third relevant command for computing new values from the dataset is summarise(). summarise() is essentially mutate(), however it will only leave the summary values and grouping factors.
@@ -253,6 +259,16 @@ gapminder %>%
   arrange(year)
 
 
+# We can look at this graphically
+gapminder %>% 
+  group_by(country) %>% 
+  filter(gdpPercap == max(gdpPercap), !year == max(year)) %>% 
+  select(country,continent,year,gdpPercap) %>% 
+  arrange(year) %>% 
+  ggplot(aes(x=year,y=gdpPercap,color=country))+
+  geom_point()
+
+
 # We can use summarise to calculate mean values
 gapminder %>% 
   group_by(continent) %>% 
@@ -300,10 +316,12 @@ gapminder %>%
   group_by(country) %>% 
   filter(mean(pop)>30000000)
 
-# Countries where the maximal population is above 100 million
+# Countries where the maximal population is above 100 million, let's add a graph too!
 gapminder %>% 
   group_by(country) %>% 
-  filter(max(pop)>100000000)
+  filter(max(pop)>100000000) %>% 
+  ggplot(aes(x=year,y=pop,color=country))+
+  geom_point()
 
 
 # As a combination of basic commands it is now possible to get quite diverse information out of a dataframe.
